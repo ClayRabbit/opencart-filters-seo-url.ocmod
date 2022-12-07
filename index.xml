@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<modification>
+  <name>seo_url mod for filters</name>
+  <version>1.0</version>
+  <code>cr-filters-seo-url</code>
+  <author>clayrabbit</author>
+  <link>https://clayrabbit.ru</link>
+  
+  <file path="catalog/controller/startup/seo_url.php">
+    <operation>
+      <search><![CDATA[if ($url[0] == 'manufacturer_id') {]]></search>
+      <add position="before"><![CDATA[
+  if ($url[0] == 'filter_id') {
+    if (!isset($this->request->get['filter'])) {
+      $this->request->get['filter'] = $url[1];
+    } else {
+      $this->request->get['filter'] .= ',' . $url[1];
+    }
+  }
+      ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[} elseif ($key == 'path') {]]></search>
+      <add position="before"><![CDATA[
+  } elseif ($key == 'filter') {
+    $filters = array_unique(explode(',', $value));
+    sort($filters);
+
+    foreach ($filters as &$filter) {
+      $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "seo_url WHERE `query` = 'filter_id=" . (int)$filter . "' AND store_id = '" . (int)$this->config->get('config_store_id') . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "'");
+
+      if ($query->num_rows && $query->row['keyword']) {
+        $url .= '/' . $query->row['keyword'];
+        $filter = '';
+      }
+    }
+
+    $data['filter'] = implode(',', array_filter($filters));
+    if (!$data['filter']) unset($data['filter']);
+        ]]></add>
+    </operation>
+    <operation>
+      <search><![CDATA[if ($query->row['query'] && $url[0] != 'information_id' && $url[0] != 'manufacturer_id' && $url[0] != 'category_id' && $url[0] != 'product_id']]></search>
+      <add position="replace"><![CDATA[if ($query->row['query'] && $url[0] != 'information_id' && $url[0] != 'manufacturer_id' && $url[0] != 'category_id' && $url[0] != 'product_id' && $url[0] != 'filter_id']]></add>
+    </operation>
+  </file>
+</modification>
