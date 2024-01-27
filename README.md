@@ -1,7 +1,7 @@
-# [ocmod] SEO URL support for filters
+# [ocmod] WEBP image support
 
-This mod will add support for filters into controller/startup/seo_url.php
+With this mod you will be able to upload and use WEBP images for your products etc.
 
-You have to add keys with corresponding query like "filter=N" into your SEO URL table.
+(But remeber - they will not be displayed in older browsers.)
 
-https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=44447
+https://www.opencart.com/index.php?route=marketplace/extension/info&extension_id=
